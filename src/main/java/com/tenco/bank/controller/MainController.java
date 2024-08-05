@@ -2,6 +2,7 @@ package com.tenco.bank.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller  // Ioc 의 대상(싱글톤패턴 관리) -- 제어의 역전
 // 제어의 권한--라이브러리
@@ -13,6 +14,7 @@ public class MainController {
 	// 주소설계
 	// http:localhost:8080/main-page
 	@GetMapping({"/main-page","/index"})
+	 // @ResponseBody
 	public String mainPage() {
 		
 		System.out.println("mainpage() 호출 확인");
