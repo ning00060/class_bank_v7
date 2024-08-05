@@ -20,5 +20,5 @@ public class History {
 	private Long dBalance;
 	private Integer wAccount;
 	private Integer dAccount;
-	private Timestamp craetedAt;
+	private Timestamp craetedAt;	
 }
