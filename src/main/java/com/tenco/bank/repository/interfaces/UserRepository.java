@@ -2,7 +2,10 @@ package com.tenco.bank.repository.interfaces;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;import com.tenco.bank.repository.model.User;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.tenco.bank.repository.model.User;
 
 // 마이바티스 설정 확인
 
@@ -15,4 +18,8 @@ public interface UserRepository {
 	public int deleteById(Integer id);
 	public User findById(Integer id);
 	public List<User> findAll();
+	
+	// 로그인 기능(username,password) --> return user
+	// 주의 !- 매개변수 2개 이상시 반드시 @param어노테이션을 사용하자
+	public User findByUsernameAndPassword(@Param("username") String username,@Param("password") String password);
 }
