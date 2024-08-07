@@ -18,6 +18,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	public UserController() {
+	}
 	/**
 	 * 주소설계 -> http://localhost:8080/user/sign-up 
 	 * @return sign.jsp
@@ -28,7 +31,7 @@ public class UserController {
 		// prefix: /WEB-INF/view
 		// return: user/signUp
 		// suffix: .jsp
-		return "user/signUp	";
+		return "user/signUp";
 	}
 	
 	/**
@@ -40,7 +43,7 @@ public class UserController {
 	 */
 	@PostMapping("/sign-up")
 	public String signUpProc(SignUpDTO dto) {
-		
+		System.out.println("test : "+ dto.toString());
 		// controller 에서 일반적인 코드 작업
 		// 1.인증검사 (여기서는 인증검사 불 필요)
 		// 2.유효성 검사
