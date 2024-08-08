@@ -67,6 +67,8 @@ public class UserService {
 		if(userEntity==null) {
 			throw new DataDeliveryException("아이디 혹은 비밀번호가 틀렸습니다", HttpStatus.BAD_REQUEST);
 		}
+
+
 		return userEntity;
 	}
 }
