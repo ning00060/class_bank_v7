@@ -18,7 +18,7 @@ public class History {
 	private Long amount;
 	private Long wBalance;
 	private Long dBalance;
-	private Integer wAccount;
-	private Integer dAccount;
+	private Integer wAccountId;
+	private Integer dAccountId;
 	private Timestamp craetedAt;	
 }
