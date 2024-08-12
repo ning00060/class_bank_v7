@@ -24,4 +24,5 @@ public interface AccountRepository {
 	public Account findByNumber(@Param("number") String number);
 	
 	// --> account id 값으로 계좌 정보 조회
+	public Account findByAccountId(Integer accountId);
 }
