@@ -122,7 +122,6 @@ public class AccountService {
 
 		// 2
 		accountEntity.checkOwner(principalId);
-		accountEntity.CheckBalance(dto.getAmount());
 		// update 처리
 		// accoutEntity 객체의 잔액을 변경하고 업데이트 처리해야 한다.
 		// 3
