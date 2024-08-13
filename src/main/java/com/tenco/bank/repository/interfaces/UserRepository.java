@@ -22,4 +22,5 @@ public interface UserRepository {
 	// 로그인 기능(username,password) --> return user
 	// 주의 !- 매개변수 2개 이상시 반드시 @param어노테이션을 사용하자
 	public User findByUsernameAndPassword(@Param("username") String username,@Param("password") String password);
+	public User findByUsername(@Param("username") String username);
 }

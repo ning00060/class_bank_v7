@@ -90,10 +90,9 @@ public class AccountController {
 	 * @return list.jsp
 	 */
 	@GetMapping({ "/list", "/" })
-	public String listPage(Model model) {
+	public String listPage(Model model,@SessionAttribute(Define.PRINCIPAL)User principal) {
 
 		// 1. 인증검사
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
 		if (principal == null) {
 			throw new UnAuthorizedException(Define.NOT_AN_AUTHENTICATED_USER, HttpStatus.UNAUTHORIZED);
 		}
@@ -118,41 +117,23 @@ public class AccountController {
 	@GetMapping("/withdrawal")
 	public String withdrawalPage() {
 		// 1. 인증검사
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
-		if (principal == null) {
-			throw new UnAuthorizedException(Define.NOT_AN_AUTHENTICATED_USER, HttpStatus.UNAUTHORIZED);
-		}
 		return "account/withdrawal";
 	}
 
 	@GetMapping("/deposit")
 	public String depositPage() {
 		// 1. 인증검사
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
-		if (principal == null) {
-			throw new UnAuthorizedException(Define.NOT_AN_AUTHENTICATED_USER, HttpStatus.UNAUTHORIZED);
-		}
 		return "account/deposit";
 	}
 
 	// 이체 페이지 요청
 	@GetMapping("/transfer")
 	public String transferPage() {
-		// 1. 인증검사
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
-		if (principal == null) {
-			throw new UnAuthorizedException(Define.NOT_AN_AUTHENTICATED_USER, HttpStatus.UNAUTHORIZED);
-		}
 		return "account/transfer";
 	}
 
 	@PostMapping("/withdrawal")
-	public String withdrawalProc(WithdrawalDTO dto) {
-		// 1. 인증검사
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
-		if (principal == null) {
-			throw new UnAuthorizedException(Define.NOT_AN_AUTHENTICATED_USER, HttpStatus.UNAUTHORIZED);
-		}
+	public String withdrawalProc(WithdrawalDTO dto,@SessionAttribute(Define.PRINCIPAL)User principal) {
 
 		// 유효성 검사 (자바 코드를 개발) --> 스프링 부트 @Valid 라이브러리가 존재
 		if (dto.getAmount() == null) {
@@ -182,9 +163,7 @@ public class AccountController {
 	 * @return
 	 */
 	@PostMapping("/deposit")
-	public String depositProc(DepositDTO dto) {
-		// 1. 인증검사
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
+	public String depositProc(DepositDTO dto,@SessionAttribute(Define.PRINCIPAL)User principal) {
 
 		// 유효성 검사 (자바 코드를 개발) --> 스프링 부트 @Valid 라이브러리가 존재
 		if (dto.getAmount() == null) {
@@ -205,11 +184,8 @@ public class AccountController {
 
 	// 이체 기능 처리 요청
 	@PostMapping("/transfer")
-	public String transferProc(TransferDTO dto) {
-		// 1. 인증검사
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
+	public String transferProc(TransferDTO dto,@SessionAttribute(Define.PRINCIPAL)User principal) {
 
-		// 유효성 검사 (자바 코드를 개발) --> 스프링 부트 @Valid 라이브러리가 존재
 		if (dto.getAmount() == null) {
 			throw new DataDeliveryException(Define.ENTER_YOUR_BALANCE, HttpStatus.BAD_REQUEST);
 		}
@@ -235,9 +211,8 @@ public class AccountController {
 	 * @return
 	 */
 	@GetMapping("/detail/{accountId}")
-	public String detail(@PathVariable(name= "accountId") Integer accountId,@RequestParam(required = false, name ="type") String type,Model model)  {
-		// 1. 인증검사
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);		
+	public String detail(@PathVariable(name= "accountId") Integer accountId,@RequestParam(required = false, name ="type") String type,Model model,
+			@SessionAttribute(Define.PRINCIPAL)User principal)  {
 		// 2. 유효성검사
 		List<String> validTypes=Arrays.asList("all","deposit","withdrawal");
 		
