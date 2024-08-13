@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.tenco.bank.dto.DepositDTO;
 import com.tenco.bank.dto.SaveDTO;
@@ -48,11 +49,7 @@ public class AccountController {
 	@GetMapping("/save")
 	public String savePage() {
 
-		// 1. 인증 검사가 필요(account 전체가 필요함)
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
-		if (principal == null) {
-			throw new UnAuthorizedException(Define.NOT_AN_AUTHENTICATED_USER, HttpStatus.UNAUTHORIZED);
-		}
+
 		return "account/save";
 	}
 
@@ -62,12 +59,11 @@ public class AccountController {
 	 * @return : 추후 계좌 목록 페이지 이동 처리
 	 */
 	@PostMapping("/save")
-	public String saveProc(SaveDTO dto) {
+	public String saveProc(SaveDTO dto,@SessionAttribute(Define.PRINCIPAL)User principal)  {
 		// 1. form 데이터 추출 (파싱 전략)
 		// 2. 인증 검사
 		// 3. 유효성 검사
-		// 4. 서비스 호출
-		User principal = (User) session.getAttribute(Define.PRINCIPAL);
+		// 4. 서비스 호출  
 
 		if (principal == null) {
 			throw new UnAuthorizedException(Define.NOT_AN_AUTHENTICATED_USER, HttpStatus.UNAUTHORIZED);
