@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 
 public abstract class ValueFormatter {
 
-	public String timestamptoString(Timestamp timestamp) {
+	public String timestampToString(Timestamp timestamp) {
 		SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return sdf.format(timestamp);
 	}
