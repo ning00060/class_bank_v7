@@ -24,7 +24,7 @@ public class GlobalControllerAdvice {
 //		System.out.println(e.getMessage());
 //		System.out.println("----------------------");
 //	}
-	
+//	
 	/**
 	 * Data로 예외를 내려주는 방법 
 	 * @ResponseBody 활용 
@@ -37,10 +37,10 @@ public class GlobalControllerAdvice {
 	@ExceptionHandler(DataDeliveryException.class)
 	public String dataDeleveryExcption(DataDeliveryException e) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(" <script>");
-		sb.append(" alert('"+ e.getMessage()  +"');");
-		sb.append(" window.history.back();");
-		sb.append(" </script>");
+		sb.append("<script>");
+		sb.append("alert('"+ e.getMessage()  +"')");
+		sb.append("window.history.back();");
+		sb.append("</script>");
 		return sb.toString(); 
 	}
 	
@@ -48,10 +48,10 @@ public class GlobalControllerAdvice {
 	@ExceptionHandler(UnAuthorizedException.class)
 	public String unAuthorizedException(UnAuthorizedException e) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(" <script>");
-		sb.append(" alert('"+ e.getMessage()  +"');");
-		sb.append(" location.href='/user/sign-in';");
-		sb.append(" </script>");
+		sb.append("<script>");
+		sb.append("alert('"+ e.getMessage()  +"')");
+		sb.append("window.history.back();");
+		sb.append("</script>");
 		return sb.toString(); 
 	}
 	

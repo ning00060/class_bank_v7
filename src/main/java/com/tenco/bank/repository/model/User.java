@@ -22,4 +22,9 @@ public class User {
 	private String uploadFileName;
 	private String mFile;
 	private Timestamp createdAt;
+	
+	public String setUpUserImage() {
+		
+		return uploadFileName ==null ? "https://picsum.photos/id/1/350" :"/images/uploads/" + uploadFileName;
+	}
 }

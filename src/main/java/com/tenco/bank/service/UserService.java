@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,13 +33,10 @@ public class UserService {
 	@Autowired
 	private final PasswordEncoder passwordEncoder;
 
-//	@Autowired 어노테이션으로 대체 가능 하다
-//	생성자 의존 주입 -DI
-//	public UserService(UserRepository userRepository) {
-//		this.userRepository=userRepository;
-//	}
-	// 회원 가입 처리
-
+	// 초기 파라미터 가져오는 방법
+	@Value("${file.upload-dir}")
+	private String uploadDir;
+	
 	/**
 	 * 회원 등록 서비스 기능 트랜잭션 처리
 	 * 
@@ -93,8 +91,16 @@ public class UserService {
 		if(mFile.getSize() >Define.MAX_FILE_SIZE) {
 			throw new DataDeliveryException("파일크기는 20MB 이상 클 수없습니다", HttpStatus.BAD_REQUEST);
 		}
+		
+		// 코드 수정
+		// File- getAbsuloutePath() : 파일 시스템의 절대 경로를 나타냅니다.
+		// (리눅스 또는 MacOS) 에 맞춰서 절대 경로가 생성을 시킬 수 있다.
+//		String saveDirectory=new File(uploadDir).getAbsolutePath();
+		String saveDirectory=uploadDir;
+//		System.out.println("savedirectory: "+ saveDirectory);
+		
 		// 서버 컴퓨터에 파일을 넣을 디렉토리가 있는지 검사
-		String saveDirectory=Define.UPLOAD_FILE_DERECTORY;
+//		String saveDirectory=Define.UPLOAD_FILE_DERECTORY;
 		File directory= new File(saveDirectory);
 		
 		if(!directory.exists()) {
