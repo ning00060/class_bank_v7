@@ -45,10 +45,7 @@ public class UserService {
 	@Transactional // 트랜잭션 처리는 반드시 습관화
 	public void createUser(SignUpDTO dto) {
 		int result = 0;
-		System.out.println("---------------------");
-		System.out.println(dto.getMFile().getOriginalFilename());
-		System.out.println("---------------------");
-		if(!dto.getMFile().isEmpty()) {
+		if(dto.getMFile() != null && !dto.getMFile().isEmpty()) {
 			// 파일 업로드 로직 구현
 		String[] fileNames=	uploadFile(dto.getMFile());
 			dto.setOriginFileName(fileNames[0]);
@@ -158,4 +155,15 @@ public class UserService {
 		
 		return userEntity;
 	}
+	
+	/**
+	 * username 사용자 존재 여부 조회
+	 * @param String username
+	 * @return User , null
+	 */
+	public User searchUsername(String username) {
+		
+		return userRepository.findByUsername(username);
+	}
+	
 }

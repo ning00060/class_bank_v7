@@ -3,6 +3,7 @@ package com.tenco.bank.controller;
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.tenco.bank.dto.KakaoDTO;
+import com.tenco.bank.dto.KakaoProfile;
+import com.tenco.bank.dto.OAuthToken;
 import com.tenco.bank.dto.SignInDTO;
 import com.tenco.bank.dto.SignUpDTO;
 import com.tenco.bank.handler.exception.DataDeliveryException;
@@ -42,6 +45,9 @@ public class UserController {
 		this.session = session;
 	}
 
+	// yml 의 파라미터 받아오는 방식
+	@Value("${tenco.key}")
+	private String tencoKey;
 	/**
 	 * 주소설계 -> http://localhost:8080/user/sign-up
 	 * 
@@ -128,8 +134,12 @@ public class UserController {
 	}
 
 	@GetMapping("/kakao")
-	@ResponseBody
-	public ResponseEntity<?> kakaoPage(@RequestParam(name = "code") String code) {
+//	@ResponseBody // RestController = @Controller + ResponseBody
+	public String kakaoPage(@RequestParam(name = "code") String code) {
+		
+		// POST -카카오 토큰 요청 받기
+		// Header, body 구성
+		
 	    URI uri = UriComponentsBuilder.fromUriString("https://kauth.kakao.com")
 	            .path("/oauth/token")
 	            .build()
@@ -155,11 +165,62 @@ public class UserController {
 
 	    HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 
-	    ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, String.class);
+	    ResponseEntity<OAuthToken> response1 = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, OAuthToken.class);
 
-	    System.out.println("Response Header: " + response.getHeaders());
-	    System.out.println("Response Body: " + response.getBody());
 
-	    return ResponseEntity.status(HttpStatus.OK).body(response.getBody());
+	    System.out.println("response :" +response1.getBody().toString());
+	    
+	    // 여기까지 authorization code 받아오는 방법
+	    
+	    RestTemplate rt2 =new RestTemplate();
+	    //헤더
+	    HttpHeaders headers2=new HttpHeaders();
+	    // 반드시 Bearer 다음에 공백 한칸 추가
+	    headers2.add("Authorization", "Bearer " + response1.getBody().getAccessToken());
+	    headers2.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+	    
+	    // HTTP Entity 만들기
+	    HttpEntity<MultiValueMap<String, String>> reqkakaoInfo = new HttpEntity<>(headers2);
+	    
+	    // 통신 요청
+	    ResponseEntity<KakaoProfile> response2= rt2.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, reqkakaoInfo, KakaoProfile.class);
+	    
+	    //
+	    
+	    KakaoProfile kakaoProfile= response2.getBody();
+	    System.out.println(kakaoProfile);
+	    // -- 카카오 사용자 정보 응답 완료 ---------------
+	    
+	    // 최초 사용자라면 자동 회원 가입 처리( 우리 서버)
+	    // 회원가입 이력이 있는 사용자라면 바로 세션 처리( 우리 서버)
+	    // 사전기반 --> 소셜 사용자는 비밀번호를 입력하는가? 안하는가?
+	    // 우리서버에 회원가입시 --> password -> not null (무조건 만들어 넣어야 함 DB 정책)
+	    
+	    SignUpDTO signUpDTO = SignUpDTO.builder()
+	    					  .username(kakaoProfile.getProperties().getNickname()+ "_" + 
+	    							  	kakaoProfile.getId())
+	    					  .fullname("OAuth_" + kakaoProfile.getProperties().getNickname())
+	    					  .password(tencoKey)
+	    					  .build();
+	    
+	    //2. 우리사이트 최초 소셜 사용자 인지 판별
+	    User oldUser=userService.searchUsername(signUpDTO.getUsername());
+	    if(oldUser == null) {
+	    	oldUser= new User();
+	    	// 사용자가 최초 소셜 로그인 사용자 임
+	    	oldUser.setUsername(signUpDTO.getUsername());
+	    	oldUser.setPassword(null);
+	    	oldUser.setFullname(signUpDTO.getFullname());
+	    	// 프로필 여부에 따라 조건 식 추가
+	    	signUpDTO.setOriginFileName(kakaoProfile.getProperties().getThumbnailImage());
+	    	userService.createUser(signUpDTO);
+	    	
+	    }
+	    	// 고민!
+	    session.setAttribute(Define.PRINCIPAL, oldUser);
+	    
+	    return "redirect:/account/list";
 	}
+	
+	//연습
 }
